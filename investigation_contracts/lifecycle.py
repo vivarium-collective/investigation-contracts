@@ -15,6 +15,10 @@ LIFECYCLES: dict[str, dict[str, list[str]]] = {
         "accepted": [],
         "rejected": [],
     },
+    "evidence": {"": ["proposed"], "proposed": ["accepted", "rejected"],
+                 "accepted": [], "rejected": []},
+    "decision": {"": ["pending"], "pending": ["recorded"], "recorded": []},
+    "conclusion": {"": ["draft"], "draft": ["published"], "published": []},
 }
 
 

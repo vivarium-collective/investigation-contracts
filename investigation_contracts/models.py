@@ -48,3 +48,67 @@ class FindingCreateBody(BaseModel):
     statement: str
     runs: list[str] = Field(default_factory=list)
     hypothesis: Optional[str] = None
+
+
+class Evidence(BaseModel):
+    id: str
+    type: Literal["evidence"] = "evidence"
+    lifecycle_state: str = "proposed"
+    owner: Literal["shared"] = "shared"
+    provenance: Provenance
+    validation_status: Literal["ok", "unresolved", "invalid", "unverified"] = "ok"
+    findings: list[str] = Field(default_factory=list)
+    hypotheses: list[str] = Field(default_factory=list)
+    confidence: float = 0.0
+    statement: str = ""
+
+
+class Decision(BaseModel):
+    id: str
+    type: Literal["decision"] = "decision"
+    lifecycle_state: str = "recorded"
+    owner: Literal["human"] = "human"
+    provenance: Provenance
+    validation_status: Literal["ok", "unresolved", "invalid", "unverified"] = "ok"
+    evidence: list[str] = Field(default_factory=list)
+    outcome: Literal["accept", "reject", "defer"]
+    rationale: str = ""
+    decided_by: str = ""
+
+
+class Conclusion(BaseModel):
+    id: str
+    type: Literal["conclusion"] = "conclusion"
+    lifecycle_state: str = "draft"
+    owner: Literal["human"] = "human"
+    provenance: Provenance
+    validation_status: Literal["ok", "unresolved", "invalid", "unverified"] = "ok"
+    evidence: list[str] = Field(default_factory=list)
+    decisions: list[str] = Field(default_factory=list)
+    hypotheses: list[str] = Field(default_factory=list)
+    statement: str = ""
+
+
+class EvidenceCreateBody(BaseModel):
+    study: str
+    findings: list[str] = Field(default_factory=list)
+    hypotheses: list[str] = Field(default_factory=list)
+    confidence: float = 0.0
+    statement: str = ""
+
+
+class DecisionCreateBody(BaseModel):
+    study: str
+    evidence: list[str] = Field(default_factory=list)
+    outcome: Literal["accept", "reject", "defer"]
+    rationale: str = ""
+    decided_by: str = ""
+
+
+class ConclusionCreateBody(BaseModel):
+    study: str
+    evidence: list[str] = Field(default_factory=list)
+    decisions: list[str] = Field(default_factory=list)
+    hypotheses: list[str] = Field(default_factory=list)
+    statement: str = ""
+    decided_by: str = ""

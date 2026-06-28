@@ -1,6 +1,6 @@
 [project]
 name = "investigation-contracts"
-version = "0.1.0"
+version = "0.2.0"
 description = "Shared bigraph-schema types for the Actionable Investigation Graph (RFC-0002)."
 requires-python = ">=3.11"
 dependencies = ["bigraph-schema", "pydantic>=2"]

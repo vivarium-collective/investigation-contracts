@@ -8,11 +8,12 @@ from __future__ import annotations
 import bigraph_schema
 
 SCHEMA_VERSION = 1
-EVENT_TYPES = ("FindingCreated",)
+EVENT_TYPES = ("FindingCreated", "EvidenceLinked", "DecisionRecorded", "ConclusionPublished")
 
 ACTOR_KIND = {"_type": "enum", "_values": ["human", "agentic", "computational", "shared"]}
 EVENT_TYPE = {"_type": "enum", "_values": list(EVENT_TYPES)}
 VALIDATION_STATUS = {"_type": "enum", "_values": ["ok", "unresolved", "invalid", "unverified"]}
+DECISION_OUTCOME = {"_type": "enum", "_values": ["accept", "reject", "defer"]}
 
 PROVENANCE = {
     "actor": "actor_kind",
@@ -22,6 +23,15 @@ PROVENANCE = {
     "justification": "string",
     "tool": "string",
     "commit": "string",
+}
+
+INVESTIGATION_NODE_FIELDS = {
+    "id": "string",
+    "type": "string",
+    "lifecycle_state": "string",
+    "owner": "actor_kind",
+    "provenance": "provenance",
+    "validation_status": "validation_status",
 }
 
 TRANSITION = {"from": "string", "to": "string"}
@@ -46,24 +56,19 @@ def make_core() -> "bigraph_schema.Core":
     core.register_type("validation_status", VALIDATION_STATUS)
     core.register_type("provenance", PROVENANCE)
     core.register_type("transition", TRANSITION)
-    core.register_type("investigation_node", {
-        "id": "string",
-        "type": "string",
-        "lifecycle_state": "string",
-        "owner": "actor_kind",
-        "provenance": "provenance",
-        "validation_status": "validation_status",
-    })
-    core.register_type("finding", {
-        "id": "string",
-        "type": "string",
-        "lifecycle_state": "string",
-        "owner": "actor_kind",
-        "provenance": "provenance",
-        "validation_status": "validation_status",
-        "statement": "string",
-        "runs": "list[string]",
-    })
+    core.register_type("decision_outcome", DECISION_OUTCOME)
+    core.register_type("investigation_node", dict(INVESTIGATION_NODE_FIELDS))
+    core.register_type("finding", {**INVESTIGATION_NODE_FIELDS,
+                                   "statement": "string", "runs": "list[string]"})
+    core.register_type("evidence", {**INVESTIGATION_NODE_FIELDS,
+                                    "findings": "list[string]", "hypotheses": "list[string]",
+                                    "confidence": "float", "statement": "string"})
+    core.register_type("decision", {**INVESTIGATION_NODE_FIELDS,
+                                    "evidence": "list[string]", "outcome": "decision_outcome",
+                                    "rationale": "string", "decided_by": "string"})
+    core.register_type("conclusion", {**INVESTIGATION_NODE_FIELDS,
+                                      "evidence": "list[string]", "decisions": "list[string]",
+                                      "hypotheses": "list[string]", "statement": "string"})
     core.register_type("event_envelope", EVENT_ENVELOPE)
     return core
 
