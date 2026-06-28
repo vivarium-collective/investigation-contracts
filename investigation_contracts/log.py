@@ -5,7 +5,8 @@ import json
 from pathlib import Path
 
 
-def read_log(path, cursor: str | None = None, types: list[str] | None = None) -> list[dict]:
+def read_log(path: str | Path, cursor: str | None = None, types: list[str] | None = None) -> list[dict]:
+    """Return events from the JSONL log at path, optionally after cursor and filtered by types."""
     p = Path(path)
     if not p.is_file():
         return []
