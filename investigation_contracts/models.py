@@ -111,3 +111,4 @@ class ConclusionCreateBody(BaseModel):
     decisions: list[str] = Field(default_factory=list)
     hypotheses: list[str] = Field(default_factory=list)
     statement: str = ""
+    decided_by: str = ""

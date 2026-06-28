@@ -56,3 +56,10 @@ def test_conclusion_no_accepting_decision():
                  _conclusion("c1", decisions=()))   # no decision referenced
     v = validate_chain(nodes)
     assert any(x["invariant"] == "conclusion->decision" and x["node_id"] == "conclusion/c1" for x in v)
+
+def test_conclusion_accept_decision_not_referenced():
+    nodes = _idx(_finding("f1"), _evidence("e1", state="accepted"),
+                 _decision("d1", evidence=("evidence/e1",), outcome="accept"),
+                 _conclusion("c1", evidence=("evidence/e1",), decisions=()))  # decision NOT referenced
+    v = validate_chain(nodes)
+    assert any(x["invariant"] == "conclusion->decision" and x["node_id"] == "conclusion/c1" for x in v)
